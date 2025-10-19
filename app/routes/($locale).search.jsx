@@ -393,16 +393,7 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
       pages {
         ...PredictivePage
       }
-      priceRange {
-        minVariantPrice{
-          amount
-          currencyCode
-        }
-        maxVariantPrice{
-          amount
-          currencyCode
-        }
-      }
+    
       products {
         ...PredictiveProduct
         giftProduct: metafield(namespace: "custom", key: "gift_product") {
