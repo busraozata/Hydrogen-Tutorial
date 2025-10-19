@@ -47,12 +47,11 @@ export async function createHydrogenRouterContext(
       // Or detect from URL path based on locale subpath, cookies, or any other strategy
       i18n: getLocaleFromRequest(request),
       cart: {
-        queryFragment: CART_QUERY_FRAGMENT,
+        queryFragment: CART_QUERY_FRAGMENT,        
       },
     },
     additionalContext,
   );
-
   return hydrogenContext;
 }
 

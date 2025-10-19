@@ -62,6 +62,8 @@ function loadDeferredData({context}) {
 export default function Homepage() {
   /** @type {LoaderReturnData} */
   const data = useLoaderData();
+  console.log(data.recommendedProducts, 'recommendedProducts');
+  
   return (
     <div className="home">
       <FeaturedCollection collection={data.featuredCollection} />
@@ -160,6 +162,9 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       altText
       width
       height
+    },
+    giftProduct: metafield(namespace: "custom", key: "gift_product") {
+      value
     }
   }
   query RecommendedProducts ($country: CountryCode, $language: LanguageCode)

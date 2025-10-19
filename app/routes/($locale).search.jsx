@@ -50,6 +50,22 @@ export default function SearchPage() {
               ref={inputRef}
               type="search"
             />
+            <br />
+            <input
+              defaultValue={0}
+              name="minPrice"
+              placeholder="Min Price"
+              ref={inputRef}
+              type="number"
+            />
+            <br />
+            <input
+              defaultValue={9999}
+              name="maxPrice"
+              placeholder="Max Price"
+              ref={inputRef}
+              type="number"
+            />
             &nbsp;
             <button type="submit">Search</button>
           </>
@@ -87,6 +103,16 @@ const SEARCH_PRODUCT_FRAGMENT = `#graphql
     title
     trackingParameters
     vendor
+    priceRange {
+      minVariantPrice{
+        amount
+        currencyCode
+      }
+      maxVariantPrice{
+        amount
+        currencyCode
+      }
+    }
     selectedOrFirstAvailableVariant(
       selectedOptions: []
       ignoreUnknownOptions: true
@@ -114,7 +140,12 @@ const SEARCH_PRODUCT_FRAGMENT = `#graphql
       product {
         handle
         title
+        giftProduct: metafield(namespace: "custom", key: "gift_product") {
+          value
+        }
       }
+      
+
     }
   }
 `;
@@ -158,6 +189,7 @@ export const SEARCH_QUERY = `#graphql
     $last: Int
     $term: String!
     $startCursor: String
+    $productFilters: [ProductFilter!]
   ) @inContext(country: $country, language: $language) {
     articles: search(
       query: $term,
@@ -190,10 +222,14 @@ export const SEARCH_QUERY = `#graphql
       sortKey: RELEVANCE,
       types: [PRODUCT],
       unavailableProducts: HIDE,
+      productFilters: $productFilters,
     ) {
       nodes {
         ...on Product {
           ...SearchProduct
+          giftProduct: metafield(namespace: "custom", key: "gift_product") {
+            value
+          }
         }
       }
       pageInfo {
@@ -220,10 +256,12 @@ async function regularSearch({request, context}) {
   const url = new URL(request.url);
   const variables = getPaginationVariables(request, {pageBy: 8});
   const term = String(url.searchParams.get('q') || '');
+  const minPrice = Number(url.searchParams.get('minPrice') || 0);
+  const maxPrice = Number(url.searchParams.get('maxPrice') || 9999);
 
   // Search articles, pages, and products for the `q` term
   const {errors, ...items} = await storefront.query(SEARCH_QUERY, {
-    variables: {...variables, term},
+    variables: {...variables, term, productFilters: [{price: {min: minPrice, max: maxPrice}}]},
   });
 
   if (!items) {
@@ -314,6 +352,9 @@ const PREDICTIVE_SEARCH_PRODUCT_FRAGMENT = `#graphql
         amount
         currencyCode
       }
+      giftProduct: metafield(namespace: "custom", key: "gift_product") {
+        value
+      }
     }
   }
 `;
@@ -352,8 +393,21 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
       pages {
         ...PredictivePage
       }
+      priceRange {
+        minVariantPrice{
+          amount
+          currencyCode
+        }
+        maxVariantPrice{
+          amount
+          currencyCode
+        }
+      }
       products {
         ...PredictiveProduct
+        giftProduct: metafield(namespace: "custom", key: "gift_product") {
+          value
+        }
       }
       queries {
         ...PredictiveQuery

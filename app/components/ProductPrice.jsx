@@ -7,6 +7,15 @@ import {Money} from '@shopify/hydrogen';
  * }}
  */
 export function ProductPrice({price, compareAtPrice}) {
+  const isFree = Number(price?.amount) === 0;
+
+  if(isFree) {
+    return(
+      <div className='product-price'>
+        <b>FREE</b>
+      </div>
+    )
+  }
   return (
     <div className="product-price">
       {compareAtPrice ? (

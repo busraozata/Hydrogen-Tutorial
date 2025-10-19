@@ -7,6 +7,14 @@ export const CART_QUERY_FRAGMENT = `#graphql
   fragment CartLine on CartLine {
     id
     quantity
+    discountAllocations{
+      ...on CartAutomaticDiscountAllocation {
+        title
+        discountedAmount{
+          ...Money
+        }
+      }
+    }
     attributes {
       key
       value
@@ -47,6 +55,9 @@ export const CART_QUERY_FRAGMENT = `#graphql
           title
           id
           vendor
+          giftProduct: metafield(namespace: "custom", key: "gift_product") {
+            value
+          }
         }
         selectedOptions {
           name

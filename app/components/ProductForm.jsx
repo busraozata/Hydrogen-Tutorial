@@ -11,6 +11,27 @@ import {useAside} from './Aside';
 export function ProductForm({productOptions, selectedVariant}) {
   const navigate = useNavigate();
   const {open} = useAside();
+  console.log(selectedVariant, "selectedVariant");
+  const giftProduct = selectedVariant?.product?.giftProduct?.value;  
+
+  const linesArray = [
+    {
+      merchandiseId: selectedVariant.id,
+      quantity: 1,
+      selectedVariant,
+    },
+  ];
+
+  if (giftProduct) {
+    linesArray.push({
+      merchandiseId: giftProduct,
+      quantity: 1,
+    });
+  }
+  console.log(linesArray, "linesArray");
+
+  const lines =
+    selectedVariant ? linesArray : [];
   return (
     <div className="product-form">
       {productOptions.map((option) => {
@@ -100,17 +121,7 @@ export function ProductForm({productOptions, selectedVariant}) {
         onClick={() => {
           open('cart');
         }}
-        lines={
-          selectedVariant
-            ? [
-                {
-                  merchandiseId: selectedVariant.id,
-                  quantity: 1,
-                  selectedVariant,
-                },
-              ]
-            : []
-        }
+        lines={lines}
       >
         {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
       </AddToCartButton>

@@ -100,6 +100,9 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
         ...MoneyCollectionItem
       }
     }
+    giftProduct: metafield(namespace: "custom", key: "gift_product") {
+      value
+    }
   }
 `;
 

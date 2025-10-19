@@ -27,6 +27,8 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['.tryhydrogen.dev'],
+  /*   allowedHosts: ['.tryhydrogen.dev'], */
+      allowedHosts: ['bodingly-reborn-quiana.ngrok-free.dev'],
+    
   },
 });

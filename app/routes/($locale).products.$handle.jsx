@@ -170,6 +170,9 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
     product {
       title
       handle
+      giftProduct: metafield(namespace: "custom", key: "gift_product") {
+        value
+      }
     }
     selectedOptions {
       name
@@ -210,6 +213,9 @@ const PRODUCT_FRAGMENT = `#graphql
           }
         }
       }
+    }
+    giftProduct: metafield(namespace: "custom", key: "gift_product") {
+      value
     }
     selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
       ...ProductVariant

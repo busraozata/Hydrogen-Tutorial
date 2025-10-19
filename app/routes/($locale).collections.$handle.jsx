@@ -127,6 +127,9 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
         ...MoneyProductItem
       }
     }
+    giftProduct: metafield(namespace: "custom", key: "gift_product") {
+      value
+    }
   }
 `;
 

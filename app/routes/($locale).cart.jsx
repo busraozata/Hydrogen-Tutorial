@@ -31,6 +31,51 @@ export async function action({request, context}) {
   let status = 200;
   let result;
 
+/*   console.log(JSON.stringify(inputs, null, 2), "inputs");
+ */
+  const currentCart = await cart.get();
+  console.log(JSON.stringify(currentCart, null, 2), "currentCart");
+
+  const currentItem = currentCart?.lines?.nodes?.find(item =>
+    item?.id === inputs?.lines?.[0]?.id || inputs?.lineIds?.[0]
+  )
+/*   console.log(JSON.stringify(currentItem, null, 2), "currentItem");
+ */
+  const giftProduct = currentItem?.merchandise?.product?.giftProduct?.value;
+/*   console.log(giftProduct, "giftProduct");
+ */
+  if(giftProduct) {
+    if(inputs?.lines?.length > 0) {
+/*       console.log("update gift product");
+ */      //increase or decrease the quantity of the gift product
+      let updatedQuantity = inputs.lines[0].quantity;
+
+      if(inputs?.["decrease-quantity"]) {
+        updatedQuantity = updatedQuantity - 1;
+      } else if(inputs?.["increase-quantity"]) {
+        updatedQuantity = updatedQuantity + 1;
+      }
+
+      inputs.lines[0].quantity = updatedQuantity;
+    } 
+
+    console.log(JSON.stringify(inputs?.lineIds,null,2), "inputs?.lineIds");
+    if (inputs?.lineIds?.length > 0) {
+      console.log("remove gift product");
+    
+      const removeThose = currentCart?.lines.nodes
+        .filter(item =>
+          item?.merchandise?.product?.giftProduct?.value === giftProduct 
+        )
+    
+      const removeThoseIds = removeThose.map(item => item.id);
+    
+      inputs.lineIds = removeThoseIds;
+    
+      console.log(JSON.stringify(inputs?.lineIds, null, 2), "inputs?.lineIds - The Final");
+    }
+  }
+
   switch (action) {
     case CartForm.ACTIONS.LinesAdd:
       result = await cart.addLines(inputs.lines);

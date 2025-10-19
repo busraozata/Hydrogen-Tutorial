@@ -20,17 +20,26 @@ export default {
         env,
         executionContext,
       );
+     // 🍪 Cookie header'ını al
+      const cookieHeader = request.headers.get('Cookie');
 
+      // cart cookie’sini yakala
+      const match = cookieHeader?.match(/cart=([^;]+)/);
+      const cartCookieValue = match ? decodeURIComponent(match[1]) : null;
+
+      // Konsola yazdır
+      console.log('🛒 Cart cookie value:', cartCookieValue);
       /**
        * Create a Remix request handler and pass
        * Hydrogen's Storefront client to the loader context.
        */
       const handleRequest = createRequestHandler({
-        // eslint-disable-next-line import/no-unresolved
+
         build: await import('virtual:react-router/server-build'),
         mode: process.env.NODE_ENV,
         getLoadContext: () => hydrogenContext,
       });
+
 
       const response = await handleRequest(request);
 

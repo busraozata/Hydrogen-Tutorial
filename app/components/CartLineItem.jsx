@@ -18,6 +18,10 @@ export function CartLineItem({layout, line}) {
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
 
+  console.log(line, "line-item");
+  const discountAllocation = line?.discountAllocations;
+  console.log(discountAllocation, "discountAllocation");
+  
   return (
     <li key={id} className="cart-line">
       {image && (
@@ -46,13 +50,16 @@ export function CartLineItem({layout, line}) {
           </p>
         </Link>
         <ProductPrice price={line?.cost?.totalAmount} />
+        
         <ul>
-          {selectedOptions.map((option) => (
-            <li key={option.name}>
-              <small>
-                {option.name}: {option.value}
-              </small>
-            </li>
+          {discountAllocation.map((discount) => (
+            Number(line?.cost?.totalAmount?.amount) !== 0 ? null : (
+              <li key={discount.id}>
+                <small>
+                  {discount.title} - {discount.discountedAmount.amount} {discount.discountedAmount.currencyCode}
+                </small>
+              </li>
+            )
           ))}
         </ul>
         <CartLineQuantity line={line} />
@@ -72,6 +79,18 @@ function CartLineQuantity({line}) {
   const {id: lineId, quantity, isOptimistic} = line;
   const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
   const nextQuantity = Number((quantity + 1).toFixed(0));
+
+  console.log(JSON.stringify(line, null, 2), "line");
+  const isFree = Number(line?.cost?.totalAmount?.amount) === 0;
+  console.log(isFree, "isFree");
+
+  if(isFree) {
+    return(
+      <div className='cart-line-quantity'>
+        <small>Quantity: {quantity} &nbsp;&nbsp;</small>
+      </div>
+    )
+  } // ürün ücretsiz ise quantity sadece kısmını göster. Butonları gizle.
 
   return (
     <div className="cart-line-quantity">

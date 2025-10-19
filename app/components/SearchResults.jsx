@@ -88,6 +88,7 @@ function SearchResultsPages({term, pages}) {
  * @param {PartialSearchResult<'products'>}
  */
 function SearchResultsProducts({term, products}) {
+  console.log(products, "products-searchresults");
   if (!products?.nodes.length) {
     return null;
   }
@@ -115,7 +116,7 @@ function SearchResultsProducts({term, products}) {
                   )}
                   <div>
                     <p>{product.title}</p>
-                    <small>{price && <Money data={price} />}</small>
+                    <small style={{display: 'flex', columnGap: '10px'}}><Money data={product.priceRange.minVariantPrice} /> - <Money data={product.priceRange.maxVariantPrice} /></small>
                   </div>
                 </Link>
               </div>
